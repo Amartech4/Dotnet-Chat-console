@@ -5,8 +5,7 @@
         public string Username { get; set; }
         public string Message { get; set; }
         public DateTime Timestamp { get; set; }
-        public string Room { get; set; }
-        public string TargetUser { get; set; }
+        public string Reciever { get; set; }
         public MessageType Type { get; set; }
 
     }
