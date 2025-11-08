@@ -1,6 +1,6 @@
 ﻿namespace Chat_examination
 {
-    public class ChatMessage
+    public class ChatModel
     {
         public string Username { get; set; }
         public string Message { get; set; }

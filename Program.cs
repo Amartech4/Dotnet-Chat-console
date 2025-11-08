@@ -1,4 +1,4 @@
-﻿namespace Chat_exmination;
+﻿namespace Chat_examination;
 
 
 class Program
@@ -6,33 +6,32 @@ class Program
     static async Task Main(string[] args)
     {
 
-        // convert int to string input and validate
 
-        string username = GetUsername();
-        Console.WriteLine($"Welcome, {username}! you will join chat room shortly");
+        var chat = new Chat();
 
-        static string GetUsername()
+        // Vi ansluter till Socket servern.
+        //var socketManager = new SocketManager();
+        await chat.Connect();
+
+        while (true)
         {
-            while (true)
+            string? input = Console.ReadLine();
+
+            if (input?.ToLower() == "exit")
             {
-                Console.WriteLine("Enter Username:");
-                var input = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(input))
-                {
-                    Console.WriteLine("Username cannot be empty.");
-                }
-                else if (int.TryParse(input, out int num))
-                {
-                    return num.ToString();
-                }
-                else
-                {
-                    return input;
-                }
+                await chat.Disconnect();
+                break;
             }
-        }
 
+            //await SocketManager.SendMessage(input ?? "");
+            await chat.SendChatMessage(input ?? "");
+
+
+            //SocketManager.DisplayMessageHistory();
+
+
+        }
+        Console.WriteLine("Disconnected from server.");
 
 
     }
