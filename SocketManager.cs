@@ -11,6 +11,9 @@ public class SocketManager
     protected static List<string> messages = new List<string>();
 
 
+    public static bool IsConnected;
+
+
     /*static SocketManager()
     {
         messages = [];
@@ -35,6 +38,11 @@ public class SocketManager
             GetMessage(receivedMessage);
         });
 
+        _client.On("typing", response =>
+        {
+            var obj = response.GetValue<string>();
+
+        });
 
         // Kod vi kan köra när vi etablerar en anslutning
         _client.OnConnected += (sender, args) =>
@@ -53,6 +61,7 @@ public class SocketManager
         await _client.ConnectAsync();
         await Task.Delay(2000);
 
+        IsConnected = _client.Connected;
         Console.WriteLine($"Connected: {_client.Connected}");
     }
 
@@ -61,6 +70,7 @@ public class SocketManager
         if (_client != null && _client.Connected)
         {
             await _client.DisconnectAsync();
+            IsConnected = _client.Connected;
             Console.WriteLine("Disconnected from server!");
         }
         else
@@ -99,7 +109,7 @@ public class SocketManager
 
     public static void DisplayMessageHistory()
     {
-        Console.Clear();
+        // Console.Clear();
         var messagesToShow = messages.Count > 20
             ? messages.Skip(messages.Count - 20)
             : messages;

@@ -4,6 +4,10 @@ public class Chat : SocketManager
     private string _username;
     public List<ChatModel> _chatHistory = new List<ChatModel>();
 
+
+    private bool isTyping = false;
+
+
     public Chat()
     {
         _username = GetUsername();
@@ -32,16 +36,28 @@ public class Chat : SocketManager
         }
     }
 
-
-    public override async Task Connect()
+    public async Task StartChat()
     {
         await base.Connect();
+        ListenForTyping();
+        await SendMessage($"{_username} joined the chat");
+    }
+    public override async Task Connect()
+    {
+
 
         // Send a message that user joined
-        if (_client != null && _client.Connected)
+        if (!_client.Connected)
         {
+            await base.Connect();
+            ListenForTyping();
             await SendMessage($"{_username} joined the chat");
         }
+        else
+        {
+            Console.WriteLine("Already connected!");
+        }
+
     }
 
     public new async Task Disconnect()
@@ -69,7 +85,7 @@ public class Chat : SocketManager
             await _client.EmitAsync(EventName, message);
             //Console.WriteLine($"{message}");
             //messages.Add($"{message}");
-            AddMessage(message);
+            UpdateChat(message);
         }
         else
         {
@@ -116,5 +132,26 @@ public class Chat : SocketManager
         Console.WriteLine("---------------------------------\n");
     }
 
+
+
+    private void ListenForTyping()
+    {
+        _client.On("typing", response =>
+        {
+            string msg = response.GetValue<string>();
+            Console.WriteLine($"{msg}");
+        });
+
+    }
+    public async Task SendTyping()
+    {
+        if (_client.Connected && !isTyping)
+        {
+            await _client.EmitAsync("typing", $"{_username} is typing...");
+            isTyping = true;
+
+        }
+
+    }
 
 }
