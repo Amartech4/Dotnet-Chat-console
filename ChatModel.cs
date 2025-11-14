@@ -1,19 +1,20 @@
-﻿namespace Chat_examination
+﻿namespace Chat_examination;
+
+public class ChatModel
 {
-    public class ChatModel
-    {
-        public string Username { get; set; }
-        public string Message { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string Reciever { get; set; }
-        public MessageType Type { get; set; }
 
-    }
+    public required string Username { get; set; }
+    public required string Message { get; set; }
+    public DateTime Timestamp { get; set; } = DateTime.Now;
+    public required string Reciever { get; set; }
+    public MessageType Type { get; set; }
 
-    public enum MessageType
-    {
-        Global,
-        Private,
-        Room
-    }
+
+}
+
+public enum MessageType
+{
+    Global,
+    Private,
+    Room
 }

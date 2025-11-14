@@ -10,16 +10,10 @@ public class SocketManager
 
     protected static List<string> messages = new List<string>();
 
-
     public static bool IsConnected;
 
 
-    /*static SocketManager()
-    {
-        messages = [];
-    }*/
-
-    // Ansluter till socketio server
+    // Connects to the socket server
     public virtual async Task Connect()
     {
 
@@ -31,26 +25,16 @@ public class SocketManager
         _client.On(EventName, response =>
         {
             string receivedMessage = response.GetValue<string>();
-            Console.WriteLine($"\n Received: {receivedMessage}");
 
-            // GetMessage hämtar meddelanden. DisplayMessageHistory
-            // visar historik av skickade meddelanden
+            // GetMessage() recieves messages. 
             GetMessage(receivedMessage);
         });
 
-        _client.On("typing", response =>
-        {
-            var obj = response.GetValue<string>();
-
-        });
-
-        // Kod vi kan köra när vi etablerar en anslutning
         _client.OnConnected += (sender, args) =>
         {
             Console.WriteLine("Connected!");
         };
 
-        // Kod vi kan köra när vi tappar anslutningen
         _client.OnDisconnected += (sender, args) =>
         {
             Console.WriteLine("Disconnected!");
@@ -62,9 +46,9 @@ public class SocketManager
         await Task.Delay(2000);
 
         IsConnected = _client.Connected;
-        Console.WriteLine($"Connected: {_client.Connected}");
     }
 
+    //disconnects from the server socket.
     public virtual async Task Disconnect()
     {
         if (_client != null && _client.Connected)
@@ -79,18 +63,9 @@ public class SocketManager
         }
     }
 
-
-    /*public static async Task GetMessage(string message)
-    {
-        await _client.EmitAsync("receive_message", message);
-        Console.WriteLine($"they said: {message}");
-        messages.Add($"from them {message}");
-    }*/
-
     protected static void GetMessage(string msg)
     {
         UpdateChat(msg);
-        //messages.Add(msg);
     }
 
     protected virtual async Task SendMessage(string message)
@@ -98,7 +73,6 @@ public class SocketManager
         if (_client.Connected)
         {
             await _client.EmitAsync(EventName, message);
-            Console.WriteLine($"You sent: {message}");
             UpdateChat($"You: {message}");
         }
         else
@@ -109,7 +83,7 @@ public class SocketManager
 
     public static void DisplayMessageHistory()
     {
-        // Console.Clear();
+        Console.Clear();
         var messagesToShow = messages.Count > 20
             ? messages.Skip(messages.Count - 20)
             : messages;
